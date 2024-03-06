@@ -20,6 +20,7 @@ class Basics extends Phaser.Scene {
 
         // add sprites
         let tomato = this.add.sprite(centerX, centerY, 'fruitandveg', 'tomato')
+        let verygoodpear = this.add.sprite(64, 64, 'fruitandveg', 'pear')
 
         // add text
         this.instructionText = this.add.bitmapText(centerX, centerY, 'gem_font', '', 24).setOrigin(0.5)
@@ -49,8 +50,54 @@ class Basics extends Phaser.Scene {
             }
         })
 
+        //make tween chain 
+        let pearTweenChain = this.tweens.chain({
+            targets: verygoodpear, 
+            loop: 1, 
+            paused: false,
+            tweens: [
+                {
+                    x: w - 64,
+                    duration: 500,
+                    ease:'Bounce.easeOut', 
+                    angle: {from: 0, to: 90}, 
+                }, 
+                {
+                    y: h - 64, 
+                    scale: {
+                        from: 1,
+                        to: 2.25,
+                    },
+                    duration: 1000, 
+                    ease: 'Sine.easeOut',
+                    angle: {from: 90, to: 180},
+                }, 
+                {
+                    x: 64, 
+                    duration: 1500,
+                    angle: {from: 180, to: 270}
+                },
+                {
+                    y: 64, 
+                    duration: 2000,
+                    scale: {
+                        from: 2.25,
+                        to: 1,
+                    },
+                    angle: {from: 270, to: 360}
+                }
+            ]
+        })
+
         // enable scene reload key
         this.reload = this.input.keyboard.addKey('R')
+
+        //add mouse input listner to start tween chain 
+        this.input.on('pointerdown', () => {
+            verygoodpear.setPosition(64, 64)
+            verygoodpear.setAngle(0)
+            pearTweenChain.restart()
+        })
 
         // update instruction text
         document.getElementById('info').innerHTML = '<strong>Basics.js</strong><br>R: Restart current scene'
